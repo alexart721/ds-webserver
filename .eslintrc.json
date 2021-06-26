@@ -12,8 +12,13 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "import"
     ],
     "rules": {
+        "no-console": 0,
+        "consistent-return": 0,
+        "import/extensions": 0,
+        "skipBlankLines": true
     }
 }
