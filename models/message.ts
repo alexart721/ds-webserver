@@ -1,6 +1,8 @@
-import { Schema, Model, model } from 'mongoose';
+import {
+  Schema, Model, model, Document,
+} from 'mongoose';
 
-export interface MessageData {
+export interface MessageData extends Document {
   messageOwner: string,
   content: string,
 }

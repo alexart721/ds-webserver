@@ -1,6 +1,8 @@
-import { Schema, Model, model } from 'mongoose';
+import {
+  Schema, Model, model, Document,
+} from 'mongoose';
 
-export interface FieldData {
+export interface FieldData extends Document {
   name: string,
   type: string,
   data: string,

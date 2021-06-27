@@ -1,14 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
+import { ExtendedRequest } from 'interfaces';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import User from '../models/user';
 
-const jwt = require('jsonwebtoken');
-const User = require('../models/users');
 const { SECRET_KEY } = process.env;
-
-interface ExtendedRequest extends Request {
-  user: User;
-  tokenExp: Number;
-  token: String;
-}
 
 const userAuth = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
   const authHeaders = req.headers.authorization;
@@ -16,13 +11,17 @@ const userAuth = async (req: ExtendedRequest, res: Response, next: NextFunction)
   const token = authHeaders.split(' ')[1];
 
   try {
-    const { id, exp } = jwt.verify(token, SECRET_KEY);
-    const user = await User.findOne({ where: { _id: id } });
-    if (!user) return res.sendStatus(401);
-    req.user = user;
-    req.tokenExp = exp;
-    req.token = token;
-    next();
+    if (SECRET_KEY) {
+      const { id, exp } = jwt.verify(token, SECRET_KEY) as JwtPayload;
+      const user = await User.findOne({ where: { _id: id } });
+      if (!user) return res.sendStatus(401);
+      req.user = user;
+      req.tokenExp = exp;
+      req.token = token; // Might not need this
+      next();
+    } else {
+      res.sendStatus(401);
+    }
   } catch (error) {
     res.sendStatus(401);
   }
