@@ -1,6 +1,8 @@
-import { Schema, Model, model } from 'mongoose';
+import {
+  Schema, Model, model, Document,
+} from 'mongoose';
 
-export interface DmChannelData {
+export interface DmChannelData extends Document {
   participants: string[],
   messages: string[],
 }

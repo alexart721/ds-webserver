@@ -1,6 +1,8 @@
-import { Schema, Model, model } from 'mongoose';
+import {
+  Schema, Model, model, Document,
+} from 'mongoose';
 
-export interface LogData {
+export interface LogData extends Document {
   content: string,
 }
 

@@ -1,6 +1,8 @@
-import { Schema, Model, model } from 'mongoose';
+import {
+  Schema, Model, model, Document,
+} from 'mongoose';
 
-export interface IssueData {
+export interface IssueData extends Document {
   title: string,
   priority: string,
   status: string,
