@@ -1,6 +1,7 @@
 import {
   Schema, Model, model, Document,
 } from 'mongoose';
+import Messages, { MessageData } from './message';
 
 export interface IssueData extends Document {
   title: string,
@@ -14,7 +15,7 @@ export interface IssueData extends Document {
   patientVitals: object,
   metaFields: string[],
   tags: string[],
-  threadMessages: string[],
+  threadMessages: MessageData[],
 }
 
 const issueSchema = new Schema<IssueData>({
@@ -76,10 +77,7 @@ const issueSchema = new Schema<IssueData>({
   tags: [{
     type: String,
   }],
-  threadMessages: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Messages',
-  }],
+  threadMessages: [Messages],
 },
 {
   timestamps: true,
