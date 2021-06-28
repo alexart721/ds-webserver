@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ExtendedRequest } from 'interfaces';
 import Users from '../models/user';
 
 // GET a user
@@ -23,9 +22,9 @@ const createNewUser = async (req: Request, res: Response): Promise<void> => {
 };
 
 // PUT add a channel to user
-const addChannel = async (req: ExtendedRequest, res: Response): Promise<void> => {
+const addChannel = async (req: Request, res: Response): Promise<void> => {
   try {
-    const newChannel = await Users.findByIdAndUpdate(req.user._id, { $push: { channels: req.params.id } });
+    const newChannel = await Users.findByIdAndUpdate(res.locals.user._id, { $push: { channels: req.params.id } });
     res.status(200).json(newChannel);
   } catch (error) {
     res.status(500).send({ error });
@@ -33,9 +32,9 @@ const addChannel = async (req: ExtendedRequest, res: Response): Promise<void> =>
 };
 
 // DELETE a chhanel from users list
-const deleteChannelFromUserList = async (req: ExtendedRequest, res: Response): Promise<void> => {
+const deleteChannelFromUserList = async (req: Request, res: Response): Promise<void> => {
   try {
-    const removeChannelFromList = await Users.findByIdAndUpdate(req.user._id, { $pull: { channels: req.params.id } });
+    const removeChannelFromList = await Users.findByIdAndUpdate(res.locals.user._id, { $pull: { channels: req.params.id } });
     res.status(203).json(removeChannelFromList);
   } catch (error) {
     res.status(500).send({ error });
