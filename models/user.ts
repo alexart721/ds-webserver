@@ -11,8 +11,8 @@ export interface UserData extends Document {
   state: string,
   status: string,
   roles: string,
-  channels: string[],
-  dmChannels: string[],
+  channels: Object[],
+  dmChannels: Object[],
 }
 
 const userSchema = new Schema<UserData>({
@@ -53,14 +53,22 @@ const userSchema = new Schema<UserData>({
     required: true,
   },
   channels: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Channels',
-    required: true,
+    id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Channels',
+    },
+    name: {
+      type: String,
+    },
   }],
   dmChannels: [{
-    type: Schema.Types.ObjectId,
-    ref: 'DmChannels',
-    required: true,
+    id: {
+      type: Schema.Types.ObjectId,
+      ref: 'dmChannels',
+    },
+    participants: [{
+      type: String,
+    }],
   }],
 },
 {

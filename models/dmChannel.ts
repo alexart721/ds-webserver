@@ -1,23 +1,19 @@
 import {
   Schema, Model, model, Document,
 } from 'mongoose';
+import Messages, { MessageData } from './message';
+import Users, { UserData } from './user';
 
 export interface DmChannelData extends Document {
-  participants: string[],
-  messages: string[],
+  activeParticipants: UserData[],
+  inactiveParticipants: UserData[],
+  messages: MessageData[],
 }
 
 const dmChannelSchema = new Schema<DmChannelData>({
-  participants: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Users',
-    required: true,
-  }],
-  messages: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Messages',
-    required: true,
-  }],
+  activeParticipants: [Users],
+  inactiveParticipants: [Users],
+  messages: [Messages],
 },
 {
   timestamps: true,
