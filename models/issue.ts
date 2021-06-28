@@ -2,6 +2,7 @@ import {
   Schema, Model, model, Document,
 } from 'mongoose';
 import Messages, { MessageData } from './message';
+import Fields, { FieldData } from './field';
 
 export interface IssueData extends Document {
   title: string,
@@ -13,7 +14,7 @@ export interface IssueData extends Document {
   patientMedicalIssues: string,
   patientMedications: string,
   patientVitals: object,
-  metaFields: string[],
+  metaFields: FieldData[],
   tags: string[],
   threadMessages: MessageData[],
 }
@@ -70,10 +71,7 @@ const issueSchema = new Schema<IssueData>({
       required: true,
     },
   },
-  metaFields: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Fields',
-  }],
+  metaFields: [Fields],
   tags: [{
     type: String,
   }],
