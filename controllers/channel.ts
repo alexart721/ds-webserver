@@ -14,10 +14,10 @@ const getAllChannels = async (_: any, res: Response): Promise<void> => {
 };
 
 // GET issues for one channel find channel by :id
-const getChannelById = async (req: Request, res: Response): Promise<void> => {
+const getChannelIssues = async (req: Request, res: Response): Promise<void> => {
   try {
     const getChannel = await Channels.findById(req.params.id);
-    res.status(200).json(getChannel);
+    res.status(200).json(getChannel?.issues);
   } catch (error) {
     res.status(500).send({ error });
   }
@@ -57,5 +57,5 @@ const deleteOneChannel = async (req: Request, res: Response): Promise<void> => {
 };
 
 export default {
-  getAllChannels, getChannelById, addNewIssue, createNewChannel, deleteOneChannel,
+  getAllChannels, getChannelIssues, addNewIssue, createNewChannel, deleteOneChannel,
 };
