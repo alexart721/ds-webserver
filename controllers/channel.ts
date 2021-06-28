@@ -27,9 +27,9 @@ const getChannelIssues = async (req: Request, res: Response): Promise<void> => {
 const addNewIssue = async (req: Request, res:Response): Promise<void> => {
   try {
     const addIssue = await Issues.create({ issueOwner: res.locals.user._id, ...req.body.issue });
-    const newIssueToChannel = await Channels.findOneAndUpdate({ _id: req.params.id },
-      { $push: { issues: addIssue._id } });
-    res.status(200).json({ newIssueToChannel, message: `New issue: ${addIssue.title} is created` });
+    await Channels.findOneAndUpdate({ _id: req.params.id },
+      { $push: { issues: addIssue } }, { new: true });
+    res.status(200).json(addIssue);
   } catch (error) {
     res.status(500).send({ error });
   }

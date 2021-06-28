@@ -5,7 +5,7 @@ import Issue from '../models/issue';
 const getIssue = async (req: Request, res: Response): Promise<void> => {
   try {
     const foundIssue = await Issue.findById(req.params.id).exec();
-    res.status(200).send(foundIssue);
+    res.status(200).json(foundIssue);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -14,7 +14,7 @@ const getIssue = async (req: Request, res: Response): Promise<void> => {
 const getArchivedIssues = async (req: Request, res: Response): Promise<void> => {
   try {
     const archivedIssues = await Issue.find({ status: 'Closed' }).exec();
-    res.status(200).send(archivedIssues);
+    res.status(200).json(archivedIssues);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -24,7 +24,7 @@ const updateIssue = async (req: Request, res: Response): Promise<void> => {
   const updates = req.body.issue;
   try {
     const updatedIssue = await Issue.findByIdAndUpdate(req.params.id, { $set: updates }, { new: true });
-    res.status(200).send(updatedIssue);
+    res.status(200).json(updatedIssue);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -33,7 +33,7 @@ const updateIssue = async (req: Request, res: Response): Promise<void> => {
 const resolveIssue = async (req: Request, res: Response): Promise<void> => {
   try {
     const resolvedIssue = await Issue.findByIdAndUpdate(req.params.id, { $set: { status: 'Closed' } }, { new: true });
-    res.status(200).send(resolvedIssue);
+    res.status(200).json(resolvedIssue);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -44,7 +44,7 @@ const addMessageToIssue = async (req: Request, res: Response): Promise<void> => 
   try {
     const newMessage = await Messages.create({ messageOwner: res.locals.user._id, content: messageBody });
     const issueWithMessage = await Issue.findByIdAndUpdate(req.params.id, { $push: { threadMessages: newMessage } });
-    res.status(201).send(issueWithMessage);
+    res.status(201).json(issueWithMessage);
   } catch (err) {
     res.status(400).send(err);
   }
