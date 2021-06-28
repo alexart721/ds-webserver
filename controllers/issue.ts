@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
-import { ExtendedRequest } from 'interfaces';
 import Messages from 'models/message';
 import Issue from '../models/issue';
 
 const getIssue = async (req: Request, res: Response): Promise<void> => {
   try {
-    const issue = await Issue.findById(req.params.id).exec();
-    res.status(200).send(issue);
+    const foundIssue = await Issue.findById(req.params.id).exec();
+    res.status(200).send(foundIssue);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -40,11 +39,11 @@ const resolveIssue = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const addMessageToIssue = async (req: ExtendedRequest, res: Response): Promise<void> => {
+const addMessageToIssue = async (req: Request, res: Response): Promise<void> => {
   const messageBody = req.body.message;
   try {
-    const newMessage = await Messages.create({ messageOwner: req.user._id, content: messageBody });
-    const issueWithMessage = await Issue.findByIdAndUpdate(req.params.id, { $push: { threadMessages: newMessage._id } });
+    const newMessage = await Messages.create({ messageOwner: res.locals.user._id, content: messageBody });
+    const issueWithMessage = await Issue.findByIdAndUpdate(req.params.id, { $push: { threadMessages: newMessage } });
     res.status(201).send(issueWithMessage);
   } catch (err) {
     res.status(400).send(err);
