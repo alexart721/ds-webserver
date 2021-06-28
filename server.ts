@@ -2,14 +2,14 @@ import http from 'http';
 import express, { Response } from 'express';
 import cors from 'cors';
 import { Server } from 'socket.io';
-// import router from './router';
+import router from './router';
 
 const bootServer = (PORT: number): http.Server => {
   const app = express();
 
   app.use(cors());
   app.use(express.json());
-  // app.use(router);
+  app.use(router);
 
   app.get('*', (_, res: Response) => {
     res.status(404).send('Page not found');
