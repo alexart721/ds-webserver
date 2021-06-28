@@ -1,6 +1,7 @@
 import http from 'http';
 import express, { Response } from 'express';
 import cors from 'cors';
+import { Server } from 'socket.io';
 // import router from './router';
 
 const bootServer = (PORT: number): http.Server => {
@@ -19,6 +20,9 @@ const bootServer = (PORT: number): http.Server => {
   });
 
   const server = http.createServer(app);
+  const io = new Server(server);
+
+  io.on('connection', () => { /* … */ });
 
   server.listen(PORT, () => {
     console.log(`Server listening at port ${PORT}`);
