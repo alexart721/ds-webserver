@@ -1,10 +1,11 @@
 import {
   Schema, Model, model, Document,
 } from 'mongoose';
+import Issues, { IssueData } from './issue';
 
 export interface ChannelData extends Document {
   name: string,
-  issues: string[],
+  issues: IssueData[],
 }
 
 const channelSchema = new Schema<ChannelData>({
@@ -12,11 +13,7 @@ const channelSchema = new Schema<ChannelData>({
     type: String,
     required: true,
   },
-  issues: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Issues',
-    required: true,
-  }],
+  issues: [Issues],
 },
 {
   timestamps: true,
