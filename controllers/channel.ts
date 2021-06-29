@@ -17,7 +17,7 @@ const getAllChannels = async (_: any, res: Response): Promise<void> => {
 const getChannelIssues = async (req: Request, res: Response): Promise<void> => {
   try {
     const getChannel = await Channels.findById(req.params.id);
-    res.status(200).json(getChannel?.issues);
+    res.status(200).json(getChannel);
   } catch (error) {
     res.status(500).send({ error });
   }

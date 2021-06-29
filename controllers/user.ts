@@ -55,12 +55,12 @@ const logoutUser = async (req: Request, res: Response): Promise<void> => {
 // Register a user's password
 const registerUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
-  const user = await Users.findOne({ where: { email } });
+  const user = await Users.findOne({ email });
   if (user?.status === 'Approved') {
     try {
       if (password === '') throw new Error();
       const hashPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await Users.findByIdAndUpdate(user?._id, { password: hashPassword }, { new: true });
+      const updatedUser = await Users.findByIdAndUpdate(user?._id, { password: hashPassword, status: 'Registered' }, { new: true });
       if (SECRET_KEY) {
         const accessToken = jwt.sign({ _id: updatedUser?._id }, SECRET_KEY, { expiresIn: '1h' });
         res.status(201).send({ accessToken });
@@ -87,9 +87,18 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
 
 // POST create a new user
 const createNewUser = async (req: Request, res: Response): Promise<void> => {
+  const {
+    firstName, lastName, email, license, state,
+  } = req.body;
   try {
-    const newUser = await Users.create(req.body.userInfo);
-    res.status(201).json(newUser);
+    if (firstName.trim() && lastName.trim() && email.trim() && license.trim() && state.trim()) {
+      const newUser = await Users.create({
+        firstName, lastName, email, license, state,
+      });
+      res.status(201).json(newUser);
+    } else {
+      res.status(400).send('Data is missing');
+    }
   } catch (error) {
     res.status(500).send({ error });
   }
