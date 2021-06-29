@@ -17,8 +17,8 @@ router.get('/issues/archived', userAuth, issue.getArchivedIssues);
 
 // Channel routes
 router.get('/channels', userAuth, channel.getAllChannels);
-router.post('/channels', adminAuth, channel.createNewChannel); // ADMIN
-router.delete('/channels/:id', adminAuth, channel.deleteOneChannel); // ADMIN
+router.post('/channels', userAuth, adminAuth, channel.createNewChannel); // ADMIN
+router.delete('/channels/:id', userAuth, adminAuth, channel.deleteOneChannel); // ADMIN
 router.get('/channels/:id/issues', userAuth, channel.getChannelIssues);
 router.post('/channels/:id/issues', userAuth, channel.addNewIssue);
 
@@ -32,14 +32,14 @@ router.delete('/dm/:id', userAuth, dmChannel.deleteDmChannel);
 // User routes
 router.get('/users/:id', userAuth, user.getUserById);
 router.post('/users', user.createNewUser);
-router.post('/users/login', userAuth, user.loginUser);
+router.post('/users/login', user.loginUser);
 router.post('/users/register', user.registerUser);
 router.post('/users/logout', userAuth, user.logoutUser);
 router.put('/users/channel/:id', userAuth, user.addChannel);
 router.delete('/users/channels/:id', userAuth, user.deleteChannelFromUserList);
-router.put('/users/:id/approve', adminAuth, user.approveUser); // ADMIN
-router.put('/users/:id/deny', adminAuth, user.bannedUser); // ADMIN
-router.put('/users/:id', adminAuth, user.updateUserInfo); // ADMIN
-router.delete('/users/:id', adminAuth, user.deleteUser); // ADMIN
+router.put('/users/:id/approve', userAuth, adminAuth, user.approveUser); // ADMIN
+router.put('/users/:id/deny', userAuth, adminAuth, user.bannedUser); // ADMIN
+router.put('/users/:id', userAuth, adminAuth, user.updateUserInfo); // ADMIN
+router.delete('/users/:id', userAuth, adminAuth, user.deleteUser); // ADMIN
 
 export default router;

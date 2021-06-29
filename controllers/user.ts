@@ -55,12 +55,12 @@ const logoutUser = async (req: Request, res: Response): Promise<void> => {
 // Register a user's password
 const registerUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
-  const user = await Users.findOne({ where: { email } });
+  const user = await Users.findOne({ email });
   if (user?.status === 'Approved') {
     try {
       if (password === '') throw new Error();
       const hashPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await Users.findByIdAndUpdate(user?._id, { password: hashPassword }, { new: true });
+      const updatedUser = await Users.findByIdAndUpdate(user?._id, { password: hashPassword, status: 'Registered' }, { new: true });
       if (SECRET_KEY) {
         const accessToken = jwt.sign({ _id: updatedUser?._id }, SECRET_KEY, { expiresIn: '1h' });
         res.status(201).send({ accessToken });
