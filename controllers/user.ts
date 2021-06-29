@@ -87,9 +87,18 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
 
 // POST create a new user
 const createNewUser = async (req: Request, res: Response): Promise<void> => {
+  const {
+    firstName, lastName, email, license, state,
+  } = req.body;
   try {
-    const newUser = await Users.create(req.body.userInfo);
-    res.status(201).json(newUser);
+    if (firstName.trim() && lastName.trim() && email.trim() && license.trim() && state.trim()) {
+      const newUser = await Users.create({
+        firstName, lastName, email, license, state,
+      });
+      res.status(201).json(newUser);
+    } else {
+      res.status(400).send('Data is missing');
+    }
   } catch (error) {
     res.status(500).send({ error });
   }

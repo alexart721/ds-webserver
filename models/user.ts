@@ -30,7 +30,7 @@ export const userSchema = new Schema<UserData>({
   },
   password: {
     type: String,
-    required: true,
+    required: false,
   },
   license: {
     type: String,
@@ -42,15 +42,15 @@ export const userSchema = new Schema<UserData>({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Approved', 'Banned'],
+    enum: ['Pending', 'Approved', 'Banned', 'Registered'],
     required: true,
     default: 'Pending',
   },
   roles: {
     type: String,
     enum: ['Admin', 'User'],
-    default: 'User',
     required: true,
+    default: 'User',
   },
   channels: [{
     id: {

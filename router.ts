@@ -31,9 +31,9 @@ router.delete('/dm/:id', userAuth, dmChannel.deleteDmChannel);
 
 // User routes
 router.get('/users/:id', userAuth, user.getUserById);
-router.post('/users', userAuth, user.createNewUser);
+router.post('/users', user.createNewUser);
 router.post('/users/login', userAuth, user.loginUser);
-router.post('/users/register', userAuth, user.registerUser);
+router.post('/users/register', user.registerUser);
 router.post('/users/logout', userAuth, user.logoutUser);
 router.put('/users/channel/:id', userAuth, user.addChannel);
 router.delete('/users/channels/:id', userAuth, user.deleteChannelFromUserList);
