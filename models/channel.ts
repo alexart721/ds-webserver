@@ -1,19 +1,19 @@
 import {
   Schema, Model, model, Document,
 } from 'mongoose';
-import Issues, { IssueData } from './issue';
+import { IssueData, issueSchema } from './issue';
 
 export interface ChannelData extends Document {
   name: string,
   issues: IssueData[],
 }
 
-const channelSchema = new Schema<ChannelData>({
+export const channelSchema = new Schema<ChannelData>({
   name: {
     type: String,
     required: true,
   },
-  issues: [Issues],
+  issues: [issueSchema],
 },
 {
   timestamps: true,

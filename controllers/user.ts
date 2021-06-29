@@ -3,9 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Channels from '../models/channel';
 import Users from '../models/user';
-import redisClient from '../index';
 
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, ADMIN_SECRET_KEY } = process.env;
 
 // Login a user
 const loginUser = async (req: Request, res: Response): Promise<void> => {
@@ -22,6 +21,21 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ accessToken: token });
 };
 
+// Login an admin
+const loginAdmin = async (req: Request, res: Response): Promise<void> => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).end('username and password are required');
+  }
+  const user = await Users.findOne({ email, roles: 'Admin' }).exec();
+  if (!user || !bcrypt.compareSync(password, user.password)) {
+    return res.status(403).end('invalid username or password');
+  }
+  const adminToken = jwt.sign({ _id: user._id }, ADMIN_SECRET_KEY as string, { expiresIn: '3h' });
+  const token = jwt.sign({ _id: user._id, adminToken }, SECRET_KEY as string, { expiresIn: '3h' });
+  res.status(200).json({ accessToken: token });
+};
+
 // Logout a user
 const logoutUser = async (req: Request, res: Response): Promise<void> => {
   const { token, tokenExp } = res.locals;
@@ -30,6 +44,7 @@ const logoutUser = async (req: Request, res: Response): Promise<void> => {
     // Redis setex takes expire time in seconds
     // Need to set by taking difference from now to exp in seconds
     const timeToExpire = tokenExp - Math.floor(Date.now() / 1000);
+    const redisClient = req.app.locals.client;
     redisClient.setex(`blacklist_${token}`, timeToExpire, 'true');
     res.status(200).send({ message: 'Logout successful!' });
   } catch (error) {
@@ -153,6 +168,7 @@ export default {
   deleteUser,
   updateUserInfo,
   loginUser,
+  loginAdmin,
   logoutUser,
   registerUser,
 };

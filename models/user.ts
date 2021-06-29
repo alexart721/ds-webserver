@@ -15,7 +15,7 @@ export interface UserData extends Document {
   dmChannels: Object[],
 }
 
-const userSchema = new Schema<UserData>({
+export const userSchema = new Schema<UserData>({
   firstName: {
     type: String,
     required: true,

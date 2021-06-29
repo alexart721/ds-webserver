@@ -7,7 +7,7 @@ export interface MessageData extends Document {
   content: string,
 }
 
-const messageSchema = new Schema<MessageData>({
+export const messageSchema = new Schema<MessageData>({
   messageOwner: {
     type: Schema.Types.ObjectId,
     ref: 'Users',
