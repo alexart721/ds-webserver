@@ -3,12 +3,18 @@ import express, { Response } from 'express';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import router from './router';
+import bootRedis from './redisDb';
+
+const REDIS_URL = String(process.env.REDIS_URL);
 
 const bootServer = (PORT: number): http.Server => {
+  const redisClient = bootRedis(REDIS_URL);
+
   const app = express();
 
   app.use(cors());
   app.use(express.json());
+  app.locals.client = redisClient;
   app.use(router);
 
   app.get('*', (_, res: Response) => {

@@ -1,8 +1,8 @@
 import express from 'express';
-import issue from 'controllers/issue';
-import channel from 'controllers/channel';
-import dmChannel from 'controllers/dmChannel';
-import user from 'controllers/user';
+import issue from './controllers/issue';
+import channel from './controllers/channel';
+import dmChannel from './controllers/dmChannel';
+import user from './controllers/user';
 import userAuth from './middlewares/userAuth';
 import adminAuth from './middlewares/adminAuth';
 

@@ -8,7 +8,7 @@ export interface FieldData extends Document {
   data: string,
 }
 
-const fieldSchema = new Schema<FieldData>({
+export const fieldSchema = new Schema<FieldData>({
   name: {
     type: String,
   },
