@@ -1,8 +1,8 @@
 import {
   Schema, Model, model, Document,
 } from 'mongoose';
-import Messages, { MessageData } from './message';
-import Fields, { FieldData } from './field';
+import { MessageData, messageSchema } from './message';
+import { FieldData, fieldSchema } from './field';
 
 export interface IssueData extends Document {
   title: string,
@@ -19,7 +19,7 @@ export interface IssueData extends Document {
   threadMessages: MessageData[],
 }
 
-const issueSchema = new Schema<IssueData>({
+export const issueSchema = new Schema<IssueData>({
   title: {
     type: String,
     required: true,
@@ -71,11 +71,11 @@ const issueSchema = new Schema<IssueData>({
       required: true,
     },
   },
-  metaFields: [Fields],
+  metaFields: [fieldSchema],
   tags: [{
     type: String,
   }],
-  threadMessages: [Messages],
+  threadMessages: [messageSchema],
 },
 {
   timestamps: true,

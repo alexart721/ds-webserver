@@ -1,5 +1,5 @@
 import { Request, NextFunction, Response } from 'express';
-import redisClient from 'index';
+// import redisClient from 'index';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { RedisError } from 'redis';
 import User from '../models/user';
@@ -10,6 +10,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeaders = req.headers.authorization;
   if (!authHeaders) return res.sendStatus(403);
   const token = authHeaders.split(' ')[1];
+  const redisClient = req.app.locals.client;
 
   redisClient.get(`blacklist_${token}`, (err: RedisError, data: string) => {
     if (err) return res.status(400).send({ err, message: 'An error occurred, logging out.' });

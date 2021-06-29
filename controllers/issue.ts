@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Messages from 'models/message';
+import Messages from '../models/message';
 import Issue from '../models/issue';
 
 const getIssue = async (req: Request, res: Response): Promise<void> => {
