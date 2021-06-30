@@ -76,10 +76,15 @@ const createNewUser = async (req: Request, res: Response): Promise<void> => {
 
 // PUT add a channel to user
 const addChannel = async (req: Request, res: Response): Promise<void> => {
+  const { userID, ids } = req.body;
+  if (!ids) {
+    res.status(400).send({message: 'You must supply a ids parameter'});
+  }
   try {
-    const channelToAdd = await Channels.findById(req.params.id);
-    const userWithChannel = await Users.findByIdAndUpdate(res.locals.user._id, {
-      $push: { channels: { id: req.params.id, name: channelToAdd?.name } },
+    const channelsToAdd = await Channels.find({_id: { $in: ids }}).exec();
+    const dataForChannels = channelsToAdd.map((val) => ({ id: val._id, name: val.name }));
+    const userWithChannel = await Users.findByIdAndUpdate(userID, {
+      $addToSet: { channels: { $each: dataForChannels } },
     });
     res.status(200).json(userWithChannel);
   } catch (error) {

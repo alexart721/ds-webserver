@@ -36,7 +36,7 @@ router.post('/users/login', user.loginUser);
 router.post('/users/register', user.registerUser);
 router.get('/users/logout', user.logoutUser);
 router.get('/users/:id', auth('User'), user.getUserById);
-router.put('/users/channel/:id', auth('User'), user.addChannel);
+router.put('/users/channel/add', auth('User'), user.addChannel);
 router.delete('/users/channels/:id', auth('User'), user.deleteChannelFromUserList);
 router.put('/users/:id/approve', auth('Admin'), user.approveUser); // ADMIN
 router.put('/users/:id/deny', auth('Admin'), user.bannedUser); // ADMIN
