@@ -17,7 +17,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
     return res.status(403).end('invalid username or password');
   }
 
-  const token = jwt.sign({ _id: user._id }, SECRET_KEY as string, { expiresIn: '3h' });
+  const token = jwt.sign({ id: user._id }, SECRET_KEY as string, { expiresIn: '3h' });
   res.status(200).json({ accessToken: token });
 };
 
