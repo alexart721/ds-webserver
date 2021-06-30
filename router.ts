@@ -31,11 +31,11 @@ router.post('/dm/:id', auth('User'), dmChannel.addNewMessage);
 router.delete('/dm/:id', auth('User'), dmChannel.deleteDmChannel);
 
 // User routes
-router.get('/users/:id', auth('User'), user.getUserById);
 router.post('/users', user.createNewUser);
 router.post('/users/login', user.loginUser);
 router.post('/users/register', user.registerUser);
-router.post('/users/logout', auth('User'), user.logoutUser);
+router.get('/users/logout', user.logoutUser);
+router.get('/users/:id', auth('User'), user.getUserById);
 router.put('/users/channel/:id', auth('User'), user.addChannel);
 router.delete('/users/channels/:id', auth('User'), user.deleteChannelFromUserList);
 router.put('/users/:id/approve', auth('Admin'), user.approveUser); // ADMIN
