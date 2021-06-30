@@ -1,5 +1,4 @@
 import { Request, NextFunction, Response } from 'express';
-// import redisClient from 'index';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { RedisError } from 'redis';
 import User from '../models/user';
@@ -20,7 +19,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (SECRET_KEY) {
       const { id, exp } = jwt.verify(token, SECRET_KEY) as JwtPayload;
-      const user = await User.findOne({ where: { _id: id } });
+      const user = await User.findOne({ _id: id });
       if (!user) return res.sendStatus(401);
       res.locals.user = user;
       res.locals.tokenExp = exp;
