@@ -3,76 +3,46 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Channels from '../models/channel';
 import Users from '../models/user';
+import fetch from 'node-fetch';
 
-const { SECRET_KEY, ADMIN_SECRET_KEY } = process.env;
+const { SECRET_KEY, ADMIN_SECRET_KEY, AUTH_URL } = process.env;
 
 // Login a user
 const loginUser = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).end('username and password are required');
-  }
-  const user = await Users.findOne({ email }).exec();
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(403).end('invalid username or password');
-  }
-
-  const token = jwt.sign({ id: user._id }, SECRET_KEY as string, { expiresIn: '3h' });
-  res.status(200).json({ accessToken: token });
-};
-
-// Login an admin
-const loginAdmin = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).end('username and password are required');
-  }
-  const user = await Users.findOne({ email, roles: 'Admin' }).exec();
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(403).end('invalid username or password');
-  }
-  const adminToken = jwt.sign({ _id: user._id }, ADMIN_SECRET_KEY as string, { expiresIn: '3h' });
-  const token = jwt.sign({ _id: user._id, adminToken }, SECRET_KEY as string, { expiresIn: '3h' });
-  res.status(200).json({ accessToken: token });
+  fetch(`${AUTH_URL}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(req.body)
+  }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
+    res.status(fetchRes.status).send(json);
+  }));
 };
 
 // Logout a user
 const logoutUser = async (req: Request, res: Response): Promise<void> => {
-  const { token, tokenExp } = res.locals;
-  try {
-    // JWT expire time is in seconds to expire time since Epoch
-    // Redis setex takes expire time in seconds
-    // Need to set by taking difference from now to exp in seconds
-    const timeToExpire = tokenExp - Math.floor(Date.now() / 1000);
-    const redisClient = req.app.locals.client;
-    redisClient.setex(`blacklist_${token}`, timeToExpire, 'true');
-    res.status(200).send({ message: 'Logout successful!' });
-  } catch (error) {
-    res.status(400).send({ error, message: 'System error, logging out.' });
-  }
+  fetch(`${AUTH_URL}/logout`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${req.headers['authorization']?.split(' ')[1]}`
+    }
+  }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
+    res.status(fetchRes.status).send(json);
+  }));
 };
 
 // Register a user's password
 const registerUser = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-  const user = await Users.findOne({ email });
-  if (user?.status === 'Approved') {
-    try {
-      if (password === '') throw new Error();
-      const hashPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await Users.findByIdAndUpdate(user?._id, { password: hashPassword, status: 'Registered' }, { new: true });
-      if (SECRET_KEY) {
-        const accessToken = jwt.sign({ _id: updatedUser?._id }, SECRET_KEY, { expiresIn: '1h' });
-        res.status(201).send({ accessToken });
-      } else {
-        throw new Error('Unable to register user');
-      }
-    } catch (error) {
-      res.status(400).send({ error, message: 'Could not register user' });
-    }
-  } else {
-    res.status(400).send({ message: 'User account not yet approved' });
-  }
+  fetch(`${AUTH_URL}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(req.body)
+  }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
+    res.status(fetchRes.status).send(json);
+  }));
 };
 
 // GET a user
@@ -177,7 +147,6 @@ export default {
   deleteUser,
   updateUserInfo,
   loginUser,
-  loginAdmin,
   logoutUser,
   registerUser,
 };
