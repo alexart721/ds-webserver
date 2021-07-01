@@ -12,9 +12,9 @@ const bootServer = (PORT: number): http.Server => {
 
   const app = express();
 
+  app.locals.client = redisClient;
   app.use(cors());
   app.use(express.json());
-  app.locals.client = redisClient;
   app.use(router);
 
   app.get('*', (_, res: Response) => {
