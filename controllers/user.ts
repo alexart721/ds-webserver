@@ -1,52 +1,21 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import fetch from 'node-fetch';
 import Channels from '../models/channel';
 import Users from '../models/user';
-import fetch from 'node-fetch';
 
-const { SECRET_KEY, ADMIN_SECRET_KEY, AUTH_URL } = process.env;
+const { AUTH_URL } = process.env;
 
 // Login a user
 const loginUser = async (req: Request, res: Response): Promise<void> => {
-<<<<<<< HEAD
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).end('username and password are required');
-  }
-  const user = await Users.findOne({ email }).exec();
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(403).end('invalid username or password');
-  }
-
-  const token = jwt.sign({ id: user._id }, SECRET_KEY as string, { expiresIn: '3h' });
-  res.status(200).json({ accessToken: token });
-};
-
-// Login an admin
-const loginAdmin = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).end('username and password are required');
-  }
-  const user = await Users.findOne({ email, roles: 'Admin' }).exec();
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(403).end('invalid username or password');
-  }
-  const adminToken = jwt.sign({ id: user._id, roles: user.roles }, ADMIN_SECRET_KEY as string, { expiresIn: '3h' });
-  const token = jwt.sign({ id: user._id, adminToken }, SECRET_KEY as string, { expiresIn: '3h' });
-  res.status(200).json({ accessToken: token });
-=======
   fetch(`${AUTH_URL}/login`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body)
+    body: JSON.stringify(req.body),
   }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
     res.status(fetchRes.status).send(json);
   }));
->>>>>>> main
 };
 
 // Logout a user
@@ -54,8 +23,8 @@ const logoutUser = async (req: Request, res: Response): Promise<void> => {
   fetch(`${AUTH_URL}/logout`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${req.headers['authorization']?.split(' ')[1]}`
-    }
+      Authorization: `Bearer ${req.headers.authorization?.split(' ')[1]}`,
+    },
   }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
     res.status(fetchRes.status).send(json);
   }));
@@ -66,9 +35,9 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
   fetch(`${AUTH_URL}/register`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body)
+    body: JSON.stringify(req.body),
   }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
     res.status(fetchRes.status).send(json);
   }));
@@ -107,10 +76,10 @@ const createNewUser = async (req: Request, res: Response): Promise<void> => {
 const addChannel = async (req: Request, res: Response): Promise<void> => {
   const { userID, ids } = req.body;
   if (!ids) {
-    res.status(400).send({message: 'You must supply a ids parameter'});
+    res.status(400).send({ message: 'You must supply a ids parameter' });
   }
   try {
-    const channelsToAdd = await Channels.find({_id: { $in: ids }}).exec();
+    const channelsToAdd = await Channels.find({ _id: { $in: ids } }).exec();
     const dataForChannels = channelsToAdd.map((val) => ({ id: val._id, name: val.name }));
     const userWithChannel = await Users.findByIdAndUpdate(userID, {
       $addToSet: { channels: { $each: dataForChannels } },
