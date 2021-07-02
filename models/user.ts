@@ -13,6 +13,7 @@ export interface UserData extends Document {
   roles: string,
   channels: Object[],
   dmChannels: Object[],
+  issueMeta: Object[]
 }
 
 export const userSchema = new Schema<UserData>({
@@ -70,6 +71,13 @@ export const userSchema = new Schema<UserData>({
       type: String,
     }],
   }],
+  issueMeta: [{
+    id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Issues'
+    },
+    name: String
+  }]
 },
 {
   timestamps: true,
