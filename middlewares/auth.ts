@@ -1,4 +1,5 @@
 import { Request, NextFunction, Response } from 'express';
+import Users from '../models/user';
 import fetch from 'node-fetch';
 
 const { AUTH_URL } = process.env;
@@ -13,14 +14,15 @@ const auth = (role: string) => async (req: Request, res: Response, next: NextFun
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ roles: role })
-    }).then((fetchRes: any) => {
-      if (fetchRes.ok) {
-        next();
-      } else {
-        fetchRes.json().then((json: any) => {
+    }).then(async (fetchRes: any) => {
+      fetchRes.json().then(async (json: any) => {
+        if (fetchRes.ok) {
+          res.locals.user = await Users.findById(json.id);
+          next();
+        } else {
           res.status(fetchRes.status).send(json);
-        });
-      }
+        }
+      });
     });
   } catch (e) {
     res.status(500).send({message: 'Internal server error'});

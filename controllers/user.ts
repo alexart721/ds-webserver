@@ -1,20 +1,18 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import fetch from 'node-fetch';
 import Channels from '../models/channel';
 import Users from '../models/user';
-import fetch from 'node-fetch';
 
-const { SECRET_KEY, ADMIN_SECRET_KEY, AUTH_URL } = process.env;
+const { AUTH_URL } = process.env;
 
 // Login a user
 const loginUser = async (req: Request, res: Response): Promise<void> => {
   fetch(`${AUTH_URL}/login`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body)
+    body: JSON.stringify(req.body),
   }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
     res.status(fetchRes.status).send(json);
   }));
@@ -25,8 +23,8 @@ const logoutUser = async (req: Request, res: Response): Promise<void> => {
   fetch(`${AUTH_URL}/logout`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${req.headers['authorization']?.split(' ')[1]}`
-    }
+      Authorization: `Bearer ${req.headers.authorization?.split(' ')[1]}`,
+    },
   }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
     res.status(fetchRes.status).send(json);
   }));
@@ -37,9 +35,9 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
   fetch(`${AUTH_URL}/register`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body)
+    body: JSON.stringify(req.body),
   }).then((fetchRes: any) => fetchRes.json().then((json: any) => {
     res.status(fetchRes.status).send(json);
   }));
@@ -76,10 +74,15 @@ const createNewUser = async (req: Request, res: Response): Promise<void> => {
 
 // PUT add a channel to user
 const addChannel = async (req: Request, res: Response): Promise<void> => {
+  const { userID, ids } = req.body;
+  if (!ids) {
+    res.status(400).send({ message: 'You must supply a ids parameter' });
+  }
   try {
-    const channelToAdd = await Channels.findById(req.params.id);
-    const userWithChannel = await Users.findByIdAndUpdate(res.locals.user._id, {
-      $push: { channels: { id: req.params.id, name: channelToAdd?.name } },
+    const channelsToAdd = await Channels.find({ _id: { $in: ids } }).exec();
+    const dataForChannels = channelsToAdd.map((val) => ({ id: val._id, name: val.name }));
+    const userWithChannel = await Users.findByIdAndUpdate(userID, {
+      $addToSet: { channels: { $each: dataForChannels } },
     });
     res.status(200).json(userWithChannel);
   } catch (error) {
