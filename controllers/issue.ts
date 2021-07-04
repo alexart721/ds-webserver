@@ -43,7 +43,7 @@ const addMessageToIssue = async (req: Request, res: Response): Promise<void> => 
   const messageBody = req.body.message;
   try {
     const newMessage = await Messages.create({ messageOwner: res.locals.user._id, content: messageBody });
-    const issueWithMessage = await Issue.findByIdAndUpdate(req.params.id, { $push: { threadMessages: newMessage } });
+    const issueWithMessage = await Issue.findByIdAndUpdate(req.params.id, { $push: { threadMessages: newMessage } }, { new: true });
     res.status(201).json(issueWithMessage);
   } catch (err) {
     res.status(400).send(err);

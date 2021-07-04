@@ -74,10 +74,10 @@ export const userSchema = new Schema<UserData>({
   issueMeta: [{
     id: {
       type: Schema.Types.ObjectId,
-      ref: 'Issues'
+      ref: 'Issues',
     },
-    name: String
-  }]
+    title: String,
+  }],
 },
 {
   timestamps: true,

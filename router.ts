@@ -3,8 +3,11 @@ import issue from './controllers/issue';
 import channel from './controllers/channel';
 import dmChannel from './controllers/dmChannel';
 import user from './controllers/user';
+<<<<<<< HEAD
 // import userAuth from './middlewares/userAuth';
 // import adminAuth from './middlewares/adminAuth';
+=======
+>>>>>>> feec935a1ce27554b5791f08032a17c3d8f05ca5
 import auth from './middlewares/auth';
 
 const router = express.Router();
@@ -22,6 +25,7 @@ router.post('/channels', auth('Admin'), channel.createNewChannel); // ADMIN
 router.delete('/channels/:id', auth('Admin'), channel.deleteOneChannel); // ADMIN
 router.get('/channels/:id/issues', auth('User'), channel.getChannelIssues);
 router.post('/channels/:id/issues', auth('User'), channel.addNewIssue);
+router.put('/channels/:id/issues', auth('User'), channel.archiveIssue);
 
 // DM Channel routes
 router.get('/dm', auth('User'), dmChannel.getAllDmChannelForUser);
@@ -36,7 +40,9 @@ router.post('/users/login', user.loginUser);
 router.post('/users/register', user.registerUser);
 router.get('/users/logout', user.logoutUser);
 router.get('/users/:id', auth('User'), user.getUserById);
-router.put('/users/channel/add', auth('User'), user.addChannel);
+router.put('/users/channels/add', auth('User'), user.addChannel);
+router.put('/users/issues/add', auth('User'), user.addIssue);
+router.put('/users/issues/remove', auth('User'), user.removeIssue);
 router.delete('/users/channels/:id', auth('User'), user.deleteChannelFromUserList);
 router.put('/users/:id/approve', auth('Admin'), user.approveUser); // ADMIN
 router.put('/users/:id/deny', auth('Admin'), user.bannedUser); // ADMIN

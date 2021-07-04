@@ -1,6 +1,6 @@
 import { Request, NextFunction, Response } from 'express';
-import Users from '../models/user';
 import fetch from 'node-fetch';
+import Users from '../models/user';
 
 const { AUTH_URL } = process.env;
 
