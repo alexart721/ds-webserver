@@ -3,8 +3,6 @@ import issue from './controllers/issue';
 import channel from './controllers/channel';
 import dmChannel from './controllers/dmChannel';
 import user from './controllers/user';
-import userAuth from './middlewares/userAuth';
-import adminAuth from './middlewares/adminAuth';
 import auth from './middlewares/auth';
 
 const router = express.Router();
@@ -36,7 +34,8 @@ router.post('/users/login', user.loginUser);
 router.post('/users/register', user.registerUser);
 router.get('/users/logout', user.logoutUser);
 router.get('/users/:id', auth('User'), user.getUserById);
-router.put('/users/channel/add', auth('User'), user.addChannel);
+router.put('/users/channels/add', auth('User'), user.addChannel);
+router.put('/users/issues/add', auth('User'), user.addIssue);
 router.delete('/users/channels/:id', auth('User'), user.deleteChannelFromUserList);
 router.put('/users/:id/approve', auth('Admin'), user.approveUser); // ADMIN
 router.put('/users/:id/deny', auth('Admin'), user.bannedUser); // ADMIN
