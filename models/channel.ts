@@ -14,6 +14,7 @@ export const channelSchema = new Schema<ChannelData>({
     required: true,
   },
   issues: [issueSchema],
+  archivedIssues: [issueSchema],
 },
 {
   timestamps: true,
