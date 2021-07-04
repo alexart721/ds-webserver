@@ -20,6 +20,7 @@ router.post('/channels', auth('Admin'), channel.createNewChannel); // ADMIN
 router.delete('/channels/:id', auth('Admin'), channel.deleteOneChannel); // ADMIN
 router.get('/channels/:id/issues', auth('User'), channel.getChannelIssues);
 router.post('/channels/:id/issues', auth('User'), channel.addNewIssue);
+router.put('/channels/:id/issues', auth('User'), channel.archiveIssue);
 
 // DM Channel routes
 router.get('/dm', auth('User'), dmChannel.getAllDmChannelForUser);
@@ -36,6 +37,7 @@ router.get('/users/logout', user.logoutUser);
 router.get('/users/:id', auth('User'), user.getUserById);
 router.put('/users/channels/add', auth('User'), user.addChannel);
 router.put('/users/issues/add', auth('User'), user.addIssue);
+router.put('/users/issues/remove', auth('User'), user.removeIssue);
 router.delete('/users/channels/:id', auth('User'), user.deleteChannelFromUserList);
 router.put('/users/:id/approve', auth('Admin'), user.approveUser); // ADMIN
 router.put('/users/:id/deny', auth('Admin'), user.bannedUser); // ADMIN

@@ -124,6 +124,20 @@ const addIssue = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// PUT remove an issue from a user
+const removeIssue = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.body.id;
+  const { issueToRemove } = req.body;
+  try {
+    const userWithoutIssue = await Users.findByIdAndUpdate(userId, {
+      $pull: { 'issueMeta.$': { id: issueToRemove._id, title: issueToRemove.title } },
+    }, { new: true });
+    res.status(200).json(userWithoutIssue);
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+};
+
 // PUT approve a user
 const approveUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -170,6 +184,7 @@ export default {
   addChannel,
   deleteChannelFromUserList,
   addIssue,
+  removeIssue,
   approveUser,
   bannedUser,
   deleteUser,

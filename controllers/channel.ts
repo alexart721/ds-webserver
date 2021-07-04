@@ -37,6 +37,20 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
   }
 };
 
+// POST an issue to the channel
+const archiveIssue = async (req: Request, res:Response): Promise<void> => {
+  try {
+    const { archivedIssue } = req.body;
+    await Channels.findOneAndUpdate({ _id: req.params.id },
+      { $pull: { 'issues.$': archivedIssue } }, { new: true });
+    const updatedChannel = await Channels.findByIdAndUpdate(req.params.id,
+      { $push: { archivedIssues: archivedIssue } });
+    res.status(200).json(updatedChannel);
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+};
+
 // POST create a new channel
 const createNewChannel = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -59,5 +73,5 @@ const deleteOneChannel = async (req: Request, res: Response): Promise<void> => {
 };
 
 export default {
-  getAllChannels, getChannelIssues, addNewIssue, createNewChannel, deleteOneChannel,
+  getAllChannels, getChannelIssues, addNewIssue, archiveIssue, createNewChannel, deleteOneChannel,
 };
