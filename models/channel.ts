@@ -6,6 +6,7 @@ import { IssueData, issueSchema } from './issue';
 export interface ChannelData extends Document {
   name: string,
   issues: IssueData[],
+  archivedIssues: IssueData[],
 }
 
 export const channelSchema = new Schema<ChannelData>({
