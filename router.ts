@@ -3,11 +3,6 @@ import issue from './controllers/issue';
 import channel from './controllers/channel';
 import dmChannel from './controllers/dmChannel';
 import user from './controllers/user';
-<<<<<<< HEAD
-// import userAuth from './middlewares/userAuth';
-// import adminAuth from './middlewares/adminAuth';
-=======
->>>>>>> feec935a1ce27554b5791f08032a17c3d8f05ca5
 import auth from './middlewares/auth';
 
 const router = express.Router();
