@@ -63,6 +63,7 @@ const createNewUser = async (req: Request, res: Response): Promise<void> => {
   const {
     firstName, lastName, email, license, state,
   } = req.body;
+  console.log(req.body);
   try {
     if (firstName.trim() && lastName.trim() && email.trim() && license.trim() && state.trim()) {
       const newUser = await Users.create({
