@@ -143,7 +143,14 @@ const removeIssue = async (req: Request, res: Response): Promise<void> => {
 const approveUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await Users.findByIdAndUpdate(req.params.id, { $set: { status: 'Approved' } }, { new: true });
-    res.status(200).json(user);
+    let registerToken: string = await fetch(`${AUTH_URL}/registerToken`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${req.headers['authorization']?.split(' ')[1]}`
+      }
+    }).then(res => res.json()).then(json => json.registerToken);
+    res.status(200).json({ registerToken, user });
   } catch (error) {
     res.status(500).send({ error });
   }
