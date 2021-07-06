@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Channels from '../models/channel';
 import Issues from '../models/issue';
 import Users from '../models/user';
+import fs from 'fs';
 
 // GET all channels
 const getAllChannels = async (_: any, res: Response): Promise<void> => {
@@ -25,6 +26,8 @@ const getChannelIssues = async (req: Request, res: Response): Promise<void> => {
 
 // POST an issue to the channel
 const addNewIssue = async (req: Request, res:Response): Promise<void> => {
+  console.log(req.file);
+  console.log(req.body);
   try {
     const user = await Users.findById(res.locals.user._id);
     const addIssue = await Issues.create({
@@ -39,6 +42,10 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
     res.status(200).json(addIssue);
   } catch (error) {
     res.status(500).send({ error });
+  } finally {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 };
 
