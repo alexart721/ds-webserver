@@ -1,4 +1,4 @@
-import { json, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import fetch from 'node-fetch';
 import Channels from '../models/channel';
 import Users from '../models/user';
@@ -144,15 +144,15 @@ const removeIssue = async (req: Request, res: Response): Promise<void> => {
 const approveUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await Users.findByIdAndUpdate(req.params.id, { $set: { status: 'Approved' } }, { new: true });
-    const { id } = req.body; 
-    let registerToken: string = await fetch(`${AUTH_URL}/registerToken`, {
+    const { id } = req.body;
+    const registerToken: string = await fetch(`${AUTH_URL}/registerToken`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${req.headers['authorization']?.split(' ')[1]}`
+        Authorization: `Bearer ${req.headers.authorization?.split(' ')[1]}`,
       },
-      body: JSON.stringify({ id })
-    }).then(res => res.json()).then(json => {
+      body: JSON.stringify({ id }),
+    }).then((innerRes) => innerRes.json()).then((json) => {
       console.log(json);
       return json.registerToken;
     });
