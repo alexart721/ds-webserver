@@ -81,6 +81,7 @@ export const userSchema = new Schema<UserData>({
       unique: true,
     },
     title: String,
+    channelName: String,
   }],
 },
 {

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
 import Channels from '../models/channel';
 import Issues from '../models/issue';
 import Users from '../models/user';
-import fs from 'fs';
 import s3 from '../s3';
 
 // GET all channels
@@ -37,9 +37,11 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
       console.log(`Saved to [/images/${upload.Key}]`);
     }
     const user = await Users.findById(res.locals.user._id);
-    let data = {
+    const channel = await Channels.findById(req.params.id);
+    const data = {
       issueOwner: res.locals.user._id,
       issueOwnerName: `Dr. ${user?.firstName} ${user?.lastName}`,
+      issueChannelName: channel?.name,
       title: req.body.title,
       priority: req.body.priority,
       patientAge: req.body.patientAge,
@@ -49,10 +51,10 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
       patientVitals: {
         temperature: req.body.temperature,
         heartRate: req.body.heartRate,
-        bloodPressure: req.body.bloodPressure
+        bloodPressure: req.body.bloodPressure,
       },
       imageUrl: '',
-      issueDescription: req.body.issueDescription || ''
+      issueDescription: req.body.issueDescription || '',
     };
     if (upload) {
       data.imageUrl = `/images/${upload.Key}`;
@@ -61,7 +63,7 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
     await Channels.findOneAndUpdate({ _id: req.params.id },
       { $push: { issues: addIssue } }, { new: true });
     await Users.findByIdAndUpdate(res.locals.user._id,
-      { $push: { issuesMeta: { id: addIssue._id, name: addIssue.title } } });
+      { $push: { issueMeta: { id: addIssue._id, title: addIssue.title, channelName: channel?.name } } });
     res.status(200).json(addIssue);
   } catch (error) {
     res.status(500).send({ error });
