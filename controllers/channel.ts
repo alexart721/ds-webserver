@@ -3,6 +3,7 @@ import Channels from '../models/channel';
 import Issues from '../models/issue';
 import Users from '../models/user';
 import fs from 'fs';
+import s3 from '../s3';
 
 // GET all channels
 const getAllChannels = async (_: any, res: Response): Promise<void> => {
@@ -29,12 +30,32 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
   console.log(req.file);
   console.log(req.body);
   try {
+    let upload;
+    if (req.file) {
+      upload = await s3.uploadFile(req.file);
+      console.log(`Saved to [/images/${upload.Key}]`);
+    }
     const user = await Users.findById(res.locals.user._id);
-    const addIssue = await Issues.create({
+    let data = {
       issueOwner: res.locals.user._id,
       issueOwnerName: `Dr. ${user?.firstName} ${user?.lastName}`,
-      ...req.body.newIssue,
-    });
+      title: req.body.title,
+      priority: req.body.priority,
+      patientAge: req.body.patientAge,
+      patientGender: req.body.patientGender,
+      patientMedicalIssues: req.body.patientMedicalIssues,
+      patientMedications: req.body.patientMedications,
+      patientVitals: {
+        temperature: req.body.temperature,
+        heartRate: req.body.heartRate,
+        bloodPressure: req.body.bloodPressure
+      },
+      imageUrl: '',
+    };
+    if (upload) {
+      data.imageUrl = `/images/${upload.Key}`;
+    }
+    const addIssue = await Issues.create(data);
     await Channels.findOneAndUpdate({ _id: req.params.id },
       { $push: { issues: addIssue } }, { new: true });
     await Users.findByIdAndUpdate(res.locals.user._id,

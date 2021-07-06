@@ -4,6 +4,7 @@ import channel from './controllers/channel';
 import dmChannel from './controllers/dmChannel';
 import user from './controllers/user';
 import auth from './middlewares/auth';
+import images from './controllers/image';
 import multer from 'multer';
 
 const upload = multer({dest: 'uploads/'});
@@ -46,5 +47,8 @@ router.put('/users/:id/approve', auth('Admin'), user.approveUser); // ADMIN
 router.put('/users/:id/deny', auth('Admin'), user.bannedUser); // ADMIN
 router.put('/users/:id', auth('Admin'), user.updateUserInfo); // ADMIN
 router.delete('/users/:id', auth('Admin'), user.deleteUser); // ADMIN
+
+//Image getting
+router.get('/images/:id', auth('User'), images.getImage);
 
 export default router;
