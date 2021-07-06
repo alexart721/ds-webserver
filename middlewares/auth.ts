@@ -17,7 +17,7 @@ const auth = (role: string) => async (req: Request, res: Response, next: NextFun
     }).then(async (fetchRes: any) => {
       fetchRes.json().then(async (json: any) => {
         if (fetchRes.ok) {
-          res.locals.user = await Users.findById(json.id);
+          res.locals.user = await Users.findById(json.id).select('-password');
           next();
         } else {
           res.status(fetchRes.status).send(json);

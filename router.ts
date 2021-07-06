@@ -39,6 +39,7 @@ router.post('/users/login', user.loginUser);
 router.post('/users/register', user.registerUser);
 router.get('/users/logout', user.logoutUser);
 router.get('/users/:id', auth('User'), user.getUserById);
+router.get('/me', auth('User'), user.whoAmI);
 router.put('/users/channels/add', auth('User'), user.addChannel);
 router.put('/users/issues/add', auth('User'), user.addIssue);
 router.put('/users/issues/remove', auth('User'), user.removeIssue);
