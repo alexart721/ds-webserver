@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
 import Channels from '../models/channel';
 import Issues from '../models/issue';
 import Users from '../models/user';
+import s3 from '../s3';
 
 // GET all channels
 const getAllChannels = async (_: any, res: Response): Promise<void> => {
@@ -25,15 +27,39 @@ const getChannelIssues = async (req: Request, res: Response): Promise<void> => {
 
 // POST an issue to the channel
 const addNewIssue = async (req: Request, res:Response): Promise<void> => {
+  console.log(req.file);
+  console.log(req.body);
+  console.log(req.files);
   try {
+    let upload;
+    if (req.file) {
+      upload = await s3.uploadFile(req.file);
+      console.log(`Saved to [/images/${upload.Key}]`);
+    }
     const user = await Users.findById(res.locals.user._id);
     const channel = await Channels.findById(req.params.id);
-    const addIssue = await Issues.create({
+    const data = {
       issueOwner: res.locals.user._id,
       issueOwnerName: `Dr. ${user?.firstName} ${user?.lastName}`,
       issueChannelName: channel?.name,
-      ...req.body.newIssue,
-    });
+      title: req.body.title,
+      priority: req.body.priority,
+      patientAge: req.body.patientAge,
+      patientGender: req.body.patientGender,
+      patientMedicalIssues: req.body.patientMedicalIssues,
+      patientMedications: req.body.patientMedications,
+      patientVitals: {
+        temperature: req.body.temperature,
+        heartRate: req.body.heartRate,
+        bloodPressure: req.body.bloodPressure,
+      },
+      imageUrl: '',
+      issueDescription: req.body.issueDescription || '',
+    };
+    if (upload) {
+      data.imageUrl = `/images/${upload.Key}`;
+    }
+    const addIssue = await Issues.create(data);
     await Channels.findOneAndUpdate({ _id: req.params.id },
       { $push: { issues: addIssue } }, { new: true });
     await Users.findByIdAndUpdate(res.locals.user._id,
@@ -41,6 +67,10 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
     res.status(200).json(addIssue);
   } catch (error) {
     res.status(500).send({ error });
+  } finally {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 };
 
