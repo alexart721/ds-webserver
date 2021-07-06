@@ -40,6 +40,7 @@ export const issueSchema = new Schema<IssueData>({
     ref: 'Users',
     required: true,
   },
+  issueOwnerName: String,
   patientAge: {
     type: Number,
     required: true,
