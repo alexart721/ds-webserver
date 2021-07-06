@@ -58,17 +58,20 @@ export const issueSchema = new Schema<IssueData>({
   },
   patientVitals: {
     temperature: {
-      type: Number,
-      required: true,
+      type: String,
     },
     heartRate: {
-      type: Number,
-      required: true,
+      type: String,
     },
     bloodPressure: {
-      type: Number,
-      required: true,
+      type: String,
     },
+  },
+  imageUrl: {
+    type: String,
+  },
+  issueDescription: {
+    type: String,
   },
   metaFields: [fieldSchema],
   tags: [{
