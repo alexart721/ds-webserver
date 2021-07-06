@@ -4,6 +4,9 @@ import channel from './controllers/channel';
 import dmChannel from './controllers/dmChannel';
 import user from './controllers/user';
 import auth from './middlewares/auth';
+import multer from 'multer';
+
+const upload = multer({dest: 'uploads/'});
 
 const router = express.Router();
 
@@ -19,7 +22,7 @@ router.get('/channels', auth('User'), channel.getAllChannels);
 router.post('/channels', auth('Admin'), channel.createNewChannel); // ADMIN
 router.delete('/channels/:id', auth('Admin'), channel.deleteOneChannel); // ADMIN
 router.get('/channels/:id/issues', auth('User'), channel.getChannelIssues);
-router.post('/channels/:id/issues', auth('User'), channel.addNewIssue);
+router.post('/channels/:id/issues', auth('User'), upload.single('image'), channel.addNewIssue);
 router.put('/channels/:id/issues', auth('User'), channel.archiveIssue);
 
 // DM Channel routes
