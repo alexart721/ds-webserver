@@ -63,7 +63,7 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
     await Channels.findOneAndUpdate({ _id: req.params.id },
       { $push: { issues: addIssue } }, { new: true });
     await Users.findByIdAndUpdate(res.locals.user._id,
-      { $push: { issuesMeta: { id: addIssue._id, name: addIssue.title, channelName: channel?.name } } });
+      { $push: { issueMeta: { id: addIssue._id, title: addIssue.title, channelName: channel?.name } } });
     res.status(200).json(addIssue);
   } catch (error) {
     res.status(500).send({ error });
