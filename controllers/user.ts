@@ -58,6 +58,10 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const whoAmI = async (req: Request, res: Response): Promise<void> => {
+  res.status(200).send(res.locals.user);
+};
+
 // POST create a new user
 const createNewUser = async (req: Request, res: Response): Promise<void> => {
   const {
@@ -207,4 +211,5 @@ export default {
   loginUser,
   logoutUser,
   registerUser,
+  whoAmI,
 };
