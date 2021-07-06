@@ -17,6 +17,7 @@ export interface IssueData extends Document {
   metaFields: FieldData[],
   tags: string[],
   threadMessages: MessageData[],
+  imageUrl: string,
 }
 
 export const issueSchema = new Schema<IssueData>({
