@@ -118,7 +118,7 @@ const addIssue = async (req: Request, res: Response): Promise<void> => {
   const { newIssue } = req.body;
   try {
     const userWithIssue = await Users.findByIdAndUpdate(userId, {
-      $addToSet: { issueMeta: { id: newIssue._id, title: newIssue.title } },
+      $addToSet: { issueMeta: { id: newIssue._id, title: newIssue.title, channelName: newIssue.issueChannelName } },
     }, { new: true });
     res.status(200).json(userWithIssue);
   } catch (error) {
@@ -132,7 +132,7 @@ const removeIssue = async (req: Request, res: Response): Promise<void> => {
   const { issueToRemove } = req.body;
   try {
     const userWithoutIssue = await Users.findByIdAndUpdate(userId, {
-      $pull: { 'issueMeta.$': { id: issueToRemove._id, title: issueToRemove.title } },
+      $pull: { 'issueMeta.$': { id: issueToRemove._id, title: issueToRemove.title, channelName: issueToRemove.issueChannelName } },
     }, { new: true });
     res.status(200).json(userWithoutIssue);
   } catch (error) {

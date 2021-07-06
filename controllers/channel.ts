@@ -27,15 +27,17 @@ const getChannelIssues = async (req: Request, res: Response): Promise<void> => {
 const addNewIssue = async (req: Request, res:Response): Promise<void> => {
   try {
     const user = await Users.findById(res.locals.user._id);
+    const channel = await Channels.findById(req.params.id);
     const addIssue = await Issues.create({
       issueOwner: res.locals.user._id,
       issueOwnerName: `Dr. ${user?.firstName} ${user?.lastName}`,
+      issueChannelName: channel?.name,
       ...req.body.newIssue,
     });
     await Channels.findOneAndUpdate({ _id: req.params.id },
       { $push: { issues: addIssue } }, { new: true });
     await Users.findByIdAndUpdate(res.locals.user._id,
-      { $push: { issuesMeta: { id: addIssue._id, name: addIssue.title } } });
+      { $push: { issuesMeta: { id: addIssue._id, name: addIssue.title, channelName: channel?.name } } });
     res.status(200).json(addIssue);
   } catch (error) {
     res.status(500).send({ error });
