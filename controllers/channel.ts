@@ -51,6 +51,7 @@ const addNewIssue = async (req: Request, res:Response): Promise<void> => {
         bloodPressure: req.body.bloodPressure
       },
       imageUrl: '',
+      issueDescription: req.body.issueDescription || ''
     };
     if (upload) {
       data.imageUrl = `/images/${upload.Key}`;
