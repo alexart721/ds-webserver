@@ -57,15 +57,18 @@ export const userSchema = new Schema<UserData>({
     id: {
       type: Schema.Types.ObjectId,
       ref: 'Channels',
+      unique: true,
     },
     name: {
       type: String,
+      unique: true,
     },
   }],
   dmChannels: [{
     id: {
       type: Schema.Types.ObjectId,
       ref: 'dmChannels',
+      unique: true,
     },
     participants: [{
       type: String,
@@ -75,6 +78,7 @@ export const userSchema = new Schema<UserData>({
     id: {
       type: Schema.Types.ObjectId,
       ref: 'Issues',
+      unique: true,
     },
     title: String,
   }],

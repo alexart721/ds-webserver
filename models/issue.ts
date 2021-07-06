@@ -34,7 +34,6 @@ export const issueSchema = new Schema<IssueData>({
     type: String,
     enum: ['Open', 'Closed'],
     default: 'Open',
-    required: true,
   },
   issueOwner: {
     type: Schema.Types.ObjectId,

@@ -81,9 +81,10 @@ const createNewUser = async (req: Request, res: Response): Promise<void> => {
 // PUT add a channel to user
 // Channels to add will come as { newChannels: [{ id: , name: }] }
 const addChannel = async (req: Request, res: Response): Promise<void> => {
-  const userId = req.body.id;
+  const userId = res.locals.user._id;
   const { newChannels } = req.body;
   const ids = newChannels.map((newChannel: ChannelApi) => newChannel.id);
+
   if (!ids) {
     res.status(400).send({ message: 'You must supply a newChannels parameter' });
   }
@@ -103,7 +104,7 @@ const addChannel = async (req: Request, res: Response): Promise<void> => {
 const deleteChannelFromUserList = async (req: Request, res: Response): Promise<void> => {
   try {
     const removeChannelFromList = await Users.findByIdAndUpdate(res.locals.user._id,
-      { $pull: { 'channels.$': { id: req.params.id } } },
+      { $pull: { channels: { id: req.params.id } } },
       { new: true });
     res.status(203).json(removeChannelFromList);
   } catch (error) {
