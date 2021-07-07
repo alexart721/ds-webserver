@@ -3,16 +3,18 @@ import {
 } from 'mongoose';
 
 export interface MessageData extends Document {
-  messageOwner: string,
+  messageOwnerId: string,
+  messageOwnerName: string,
   content: string,
 }
 
 export const messageSchema = new Schema<MessageData>({
-  messageOwner: {
+  messageOwnerId: {
     type: Schema.Types.ObjectId,
     ref: 'Users',
     required: true,
   },
+  messageOwnerName: String,
   content: {
     type: String,
     required: true,

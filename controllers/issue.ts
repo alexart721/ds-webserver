@@ -39,10 +39,23 @@ const resolveIssue = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getIsssueMessages = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const issueMessages = await Issue.findById(req.params.id);
+    res.status(200).json(issueMessages?.threadMessages);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+
 const addMessageToIssue = async (req: Request, res: Response): Promise<void> => {
   const messageBody = req.body.message;
   try {
-    const newMessage = await Messages.create({ messageOwner: res.locals.user._id, content: messageBody });
+    const newMessage = await Messages.create({
+      messageOwnerId: res.locals.user._id,
+      messageOwnerName: `Dr. ${res.locals.user.firstName} ${res.locals.user.lastName}`,
+      content: messageBody,
+    });
     const issueWithMessage = await Issue.findByIdAndUpdate(req.params.id, { $push: { threadMessages: newMessage } }, { new: true });
     res.status(201).json(issueWithMessage);
   } catch (err) {
@@ -51,5 +64,5 @@ const addMessageToIssue = async (req: Request, res: Response): Promise<void> => 
 };
 
 export default {
-  getIssue, getArchivedIssues, updateIssue, resolveIssue, addMessageToIssue,
+  getIssue, getArchivedIssues, updateIssue, resolveIssue, addMessageToIssue, getIsssueMessages,
 };
