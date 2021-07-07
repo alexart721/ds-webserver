@@ -13,7 +13,9 @@ const bootServer = (PORT: number): http.Server => {
   const app = express();
 
   app.locals.client = redisClient;
-  app.use(cors());
+  app.use(cors({
+    origin: '*',
+  }));
   app.use(express.json());
   app.use(router);
 
@@ -23,9 +25,7 @@ const bootServer = (PORT: number): http.Server => {
   });
 
   const server = http.createServer(app);
-  const io = new Server(server);
 
-  io.on('connection', () => { /* … */ });
 
   server.listen(PORT, () => {
     console.log(`Server listening at port ${PORT}`);
