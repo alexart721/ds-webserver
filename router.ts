@@ -1,13 +1,13 @@
 import express from 'express';
+import multer from 'multer';
 import issue from './controllers/issue';
 import channel from './controllers/channel';
 import dmChannel from './controllers/dmChannel';
 import user from './controllers/user';
 import auth from './middlewares/auth';
 import images from './controllers/image';
-import multer from 'multer';
 
-const upload = multer({dest: 'uploads/'});
+const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
 
@@ -15,6 +15,7 @@ const router = express.Router();
 router.get('/issues/:id', auth('User'), issue.getIssue);
 router.put('/issues/:id', auth('User'), issue.updateIssue);
 router.put('/issues/:id/resolve', auth('User'), issue.resolveIssue);
+router.get('/issues/:id/mesages', auth('User'), issue.getIsssueMessages);
 router.put('/issues/:id/messages/send', auth('User'), issue.addMessageToIssue);
 router.get('/issues/archived', auth('User'), issue.getArchivedIssues);
 
@@ -49,7 +50,7 @@ router.put('/users/:id/deny', auth('Admin'), user.bannedUser); // ADMIN
 router.put('/users/:id', auth('Admin'), user.updateUserInfo); // ADMIN
 router.delete('/users/:id', auth('Admin'), user.deleteUser); // ADMIN
 
-//Image getting
-router.get('/images/:id', auth('User'), images.getImage);
+// Image getting
+router.get('/images/:id', images.getImage);
 
 export default router;

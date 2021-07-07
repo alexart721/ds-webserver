@@ -38,7 +38,11 @@ const getDmChannelById = async (req: Request, res: Response): Promise<void> => {
 const addNewMessage = async (req: Request, res: Response): Promise<void> => {
   const messageBody = req.body.message;
   try {
-    const newMessage = await Messages.create({ messageOwner: res.locals.user._id, content: messageBody });
+    const newMessage = await Messages.create({
+      messageOwnerId: res.locals.user._id,
+      messageOwnerName: `Dr. ${res.locals.user.firstName} ${res.locals.user.lastName}`,
+      content: messageBody,
+    });
     const addMessageToDmChannel = await DmChannels.findOneAndUpdate({ _id: req.params.id }, { $push: newMessage._id }, { new: true });
     res.status(201).json(addMessageToDmChannel);
   } catch (error) {
