@@ -9,6 +9,8 @@ export interface IssueData extends Document {
   priority: string,
   status: string,
   issueOwner: string,
+  issueOwnerName: string,
+  issueChannelName: string,
   patientAge: number,
   patientGender: string,
   patientMedicalIssues: string,
@@ -17,6 +19,7 @@ export interface IssueData extends Document {
   metaFields: FieldData[],
   tags: string[],
   threadMessages: MessageData[],
+  imageUrl: string,
 }
 
 export const issueSchema = new Schema<IssueData>({
@@ -41,6 +44,7 @@ export const issueSchema = new Schema<IssueData>({
     required: true,
   },
   issueOwnerName: String,
+  issueChannelName: String,
   patientAge: {
     type: Number,
     required: true,
